@@ -41,6 +41,7 @@
 #include <memory>
 
 #include "a2time.h"
+#include "a2functional.h"
 
 namespace aria2 {
 
@@ -48,7 +49,7 @@ struct UDPTrackerRequest;
 
 class BtAnnounce {
 public:
-  virtual ~BtAnnounce() {}
+  virtual ~BtAnnounce() = default;
 
   /**
    * Returns true if announce is required.
@@ -103,8 +104,8 @@ public:
   virtual void processAnnounceResponse(const unsigned char* trackerResponse,
                                        size_t trackerResponseLength) = 0;
 
-  virtual void processUDPTrackerResponse
-  (const std::shared_ptr<UDPTrackerRequest>& req) = 0;
+  virtual void
+  processUDPTrackerResponse(const std::shared_ptr<UDPTrackerRequest>& req) = 0;
 
   /**
    * Returns true if no more announce is needed.
@@ -138,7 +139,7 @@ public:
 
   static const std::string PEERS6;
 
-  constexpr static auto DEFAULT_ANNOUNCE_INTERVAL = std::chrono::seconds(120);
+  constexpr static auto DEFAULT_ANNOUNCE_INTERVAL = 2_min;
 };
 
 } // namespace aria2

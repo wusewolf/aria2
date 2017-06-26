@@ -8,7 +8,7 @@
 
 namespace aria2 {
 
-class UriSplitTest:public CppUnit::TestFixture {
+class UriSplitTest : public CppUnit::TestFixture {
 
   CPPUNIT_TEST_SUITE(UriSplitTest);
   CPPUNIT_TEST(testUriSplit);
@@ -20,31 +20,23 @@ public:
   void testUriSplit_fail();
 };
 
-CPPUNIT_TEST_SUITE_REGISTRATION( UriSplitTest );
+CPPUNIT_TEST_SUITE_REGISTRATION(UriSplitTest);
 
 namespace {
 const char* fieldstr[] = {
-  "USR_SCHEME",
-  "USR_HOST",
-  "USR_PORT",
-  "USR_PATH",
-  "USR_QUERY",
-  "USR_FRAGMENT",
-  "USR_USERINFO",
-  "USR_USER",
-  "USR_PASSWD",
-  "USR_BASENAME"
-};
+    "USR_SCHEME",   "USR_HOST",     "USR_PORT", "USR_PATH",   "USR_QUERY",
+    "USR_FRAGMENT", "USR_USERINFO", "USR_USER", "USR_PASSWD", "USR_BASENAME"};
 } // namespace
 
-#define CHECK_FIELD_SET(RES, FLAGS)                                     \
-  for(int i = 0; i < USR_MAX; ++i) {                                    \
-    int mask = 1 << i;                                                  \
-    if((FLAGS) & mask) {                                                \
-      CPPUNIT_ASSERT_MESSAGE(fieldstr[i], RES.field_set & mask);        \
-    } else {                                                            \
-      CPPUNIT_ASSERT_MESSAGE(fieldstr[i], !(RES.field_set & mask));     \
-    }                                                                   \
+#define CHECK_FIELD_SET(RES, FLAGS)                                            \
+  for (int i = 0; i < USR_MAX; ++i) {                                          \
+    int mask = 1 << i;                                                         \
+    if ((FLAGS)&mask) {                                                        \
+      CPPUNIT_ASSERT_MESSAGE(fieldstr[i], RES.field_set& mask);                \
+    }                                                                          \
+    else {                                                                     \
+      CPPUNIT_ASSERT_MESSAGE(fieldstr[i], !(RES.field_set & mask));            \
+    }                                                                          \
   }
 
 namespace {
@@ -69,8 +61,9 @@ void UriSplitTest::testUriSplit()
   uri = "http://user@aria2.sf.net/path/";
   memset(&res, 0, sizeof(res));
   CPPUNIT_ASSERT_EQUAL(0, uri_split(&res, uri));
-  CHECK_FIELD_SET(res, (1 << USR_SCHEME) | (1 << USR_HOST) | (1 << USR_PATH) |
-                  (1 << USR_USERINFO) | (1 << USR_USER));
+  CHECK_FIELD_SET(res,
+                  (1 << USR_SCHEME) | (1 << USR_HOST) | (1 << USR_PATH) |
+                      (1 << USR_USERINFO) | (1 << USR_USER));
   CPPUNIT_ASSERT_EQUAL(std::string("aria2.sf.net"), mkstr(res, USR_HOST, uri));
   CPPUNIT_ASSERT_EQUAL(std::string("/path/"), mkstr(res, USR_PATH, uri));
   CPPUNIT_ASSERT_EQUAL(std::string("user"), mkstr(res, USR_USERINFO, uri));
@@ -79,8 +72,10 @@ void UriSplitTest::testUriSplit()
   uri = "http://user:pass@aria2.sf.net/path/";
   memset(&res, 0, sizeof(res));
   CPPUNIT_ASSERT_EQUAL(0, uri_split(&res, uri));
-  CHECK_FIELD_SET(res, (1 << USR_SCHEME) | (1 << USR_HOST) | (1 << USR_PATH) |
-                  (1 << USR_USERINFO) | (1 << USR_USER) | (1 << USR_PASSWD));
+  CHECK_FIELD_SET(res,
+                  (1 << USR_SCHEME) | (1 << USR_HOST) | (1 << USR_PATH) |
+                      (1 << USR_USERINFO) | (1 << USR_USER) |
+                      (1 << USR_PASSWD));
   CPPUNIT_ASSERT_EQUAL(std::string("aria2.sf.net"), mkstr(res, USR_HOST, uri));
   CPPUNIT_ASSERT_EQUAL(std::string("/path/"), mkstr(res, USR_PATH, uri));
   CPPUNIT_ASSERT_EQUAL(std::string("user:pass"), mkstr(res, USR_USERINFO, uri));
@@ -94,8 +89,10 @@ void UriSplitTest::testUriSplit()
   uri = "http://user@foo.com:pass@aria2.sf.net/path/";
   memset(&res, 0, sizeof(res));
   CPPUNIT_ASSERT_EQUAL(0, uri_split(&res, uri));
-  CHECK_FIELD_SET(res, (1 << USR_SCHEME) | (1 << USR_HOST) | (1 << USR_PATH) |
-                  (1 << USR_USERINFO) | (1 << USR_USER) | (1 << USR_PASSWD));
+  CHECK_FIELD_SET(res,
+                  (1 << USR_SCHEME) | (1 << USR_HOST) | (1 << USR_PATH) |
+                      (1 << USR_USERINFO) | (1 << USR_USER) |
+                      (1 << USR_PASSWD));
   CPPUNIT_ASSERT_EQUAL(std::string("aria2.sf.net"), mkstr(res, USR_HOST, uri));
   CPPUNIT_ASSERT_EQUAL(std::string("/path/"), mkstr(res, USR_PATH, uri));
   CPPUNIT_ASSERT_EQUAL(std::string("user@foo.com:pass"),
@@ -107,8 +104,9 @@ void UriSplitTest::testUriSplit()
   uri = "https://aria2.sf.net:443/path/";
   memset(&res, 0, sizeof(res));
   CPPUNIT_ASSERT_EQUAL(0, uri_split(&res, uri));
-  CHECK_FIELD_SET(res, (1 << USR_SCHEME) | (1 << USR_HOST) | (1 << USR_PORT) |
-                  (1 << USR_PATH));
+  CHECK_FIELD_SET(res,
+                  (1 << USR_SCHEME) | (1 << USR_HOST) | (1 << USR_PORT) |
+                      (1 << USR_PATH));
   CPPUNIT_ASSERT_EQUAL(std::string("https"), mkstr(res, USR_SCHEME, uri));
   CPPUNIT_ASSERT_EQUAL(std::string("aria2.sf.net"), mkstr(res, USR_HOST, uri));
   CPPUNIT_ASSERT_EQUAL(std::string("/path/"), mkstr(res, USR_PATH, uri));
@@ -118,9 +116,10 @@ void UriSplitTest::testUriSplit()
   uri = "https://user:pass@aria2.sf.net:443/path/";
   memset(&res, 0, sizeof(res));
   CPPUNIT_ASSERT_EQUAL(0, uri_split(&res, uri));
-  CHECK_FIELD_SET(res, (1 << USR_SCHEME) | (1 << USR_HOST) | (1 << USR_PORT) |
-                  (1 << USR_PATH) | (1 << USR_USERINFO) | (1 << USR_USER) |
-                  (1 << USR_PASSWD));
+  CHECK_FIELD_SET(res,
+                  (1 << USR_SCHEME) | (1 << USR_HOST) | (1 << USR_PORT) |
+                      (1 << USR_PATH) | (1 << USR_USERINFO) | (1 << USR_USER) |
+                      (1 << USR_PASSWD));
   CPPUNIT_ASSERT_EQUAL(std::string("aria2.sf.net"), mkstr(res, USR_HOST, uri));
   CPPUNIT_ASSERT_EQUAL(std::string("/path/"), mkstr(res, USR_PATH, uri));
   CPPUNIT_ASSERT_EQUAL(std::string("user:pass"), mkstr(res, USR_USERINFO, uri));
@@ -132,8 +131,9 @@ void UriSplitTest::testUriSplit()
   uri = "https://user@aria2.sf.net:443/path/";
   memset(&res, 0, sizeof(res));
   CPPUNIT_ASSERT_EQUAL(0, uri_split(&res, uri));
-  CHECK_FIELD_SET(res, (1 << USR_SCHEME) | (1 << USR_HOST) | (1 << USR_PORT) |
-                  (1 << USR_PATH) | (1 << USR_USERINFO) | (1 << USR_USER));
+  CHECK_FIELD_SET(res,
+                  (1 << USR_SCHEME) | (1 << USR_HOST) | (1 << USR_PORT) |
+                      (1 << USR_PATH) | (1 << USR_USERINFO) | (1 << USR_USER));
   CPPUNIT_ASSERT_EQUAL(std::string("aria2.sf.net"), mkstr(res, USR_HOST, uri));
   CPPUNIT_ASSERT_EQUAL(std::string("/path/"), mkstr(res, USR_PATH, uri));
   CPPUNIT_ASSERT_EQUAL(std::string("user"), mkstr(res, USR_USERINFO, uri));
@@ -157,8 +157,9 @@ void UriSplitTest::testUriSplit()
   uri = "http://user@aria2";
   memset(&res, 0, sizeof(res));
   CPPUNIT_ASSERT_EQUAL(0, uri_split(&res, uri));
-  CHECK_FIELD_SET(res, (1 << USR_SCHEME) | (1 << USR_HOST) |
-                  (1 << USR_USERINFO) | (1 << USR_USER));
+  CHECK_FIELD_SET(res,
+                  (1 << USR_SCHEME) | (1 << USR_HOST) | (1 << USR_USERINFO) |
+                      (1 << USR_USER));
   CPPUNIT_ASSERT_EQUAL(std::string("aria2"), mkstr(res, USR_HOST, uri));
   CPPUNIT_ASSERT_EQUAL(std::string("user"), mkstr(res, USR_USERINFO, uri));
   CPPUNIT_ASSERT_EQUAL(std::string("user"), mkstr(res, USR_USER, uri));
@@ -166,8 +167,9 @@ void UriSplitTest::testUriSplit()
   uri = "http://user:@aria2";
   memset(&res, 0, sizeof(res));
   CPPUNIT_ASSERT_EQUAL(0, uri_split(&res, uri));
-  CHECK_FIELD_SET(res, (1 << USR_SCHEME) | (1 << USR_HOST) |
-                  (1 << USR_USERINFO) | (1 << USR_USER) | (1 << USR_PASSWD));
+  CHECK_FIELD_SET(res,
+                  (1 << USR_SCHEME) | (1 << USR_HOST) | (1 << USR_USERINFO) |
+                      (1 << USR_USER) | (1 << USR_PASSWD));
   CPPUNIT_ASSERT_EQUAL(std::string("aria2"), mkstr(res, USR_HOST, uri));
   CPPUNIT_ASSERT_EQUAL(std::string("user:"), mkstr(res, USR_USERINFO, uri));
   CPPUNIT_ASSERT_EQUAL(std::string("user"), mkstr(res, USR_USER, uri));
@@ -176,8 +178,9 @@ void UriSplitTest::testUriSplit()
   uri = "http://aria2/?foo#bar";
   memset(&res, 0, sizeof(res));
   CPPUNIT_ASSERT_EQUAL(0, uri_split(&res, uri));
-  CHECK_FIELD_SET(res, (1 << USR_SCHEME) | (1 << USR_HOST) | (1 << USR_PATH) |
-                  (1 << USR_QUERY) | (1 << USR_FRAGMENT));
+  CHECK_FIELD_SET(res,
+                  (1 << USR_SCHEME) | (1 << USR_HOST) | (1 << USR_PATH) |
+                      (1 << USR_QUERY) | (1 << USR_FRAGMENT));
   CPPUNIT_ASSERT_EQUAL(std::string("aria2"), mkstr(res, USR_HOST, uri));
   CPPUNIT_ASSERT_EQUAL(std::string("/"), mkstr(res, USR_PATH, uri));
   CPPUNIT_ASSERT_EQUAL(std::string("foo"), mkstr(res, USR_QUERY, uri));
@@ -187,8 +190,7 @@ void UriSplitTest::testUriSplit()
   uri = "http://aria2?foo";
   memset(&res, 0, sizeof(res));
   CPPUNIT_ASSERT_EQUAL(0, uri_split(&res, uri));
-  CHECK_FIELD_SET(res, (1 << USR_SCHEME) | (1 << USR_HOST) |
-                  (1 << USR_QUERY));
+  CHECK_FIELD_SET(res, (1 << USR_SCHEME) | (1 << USR_HOST) | (1 << USR_QUERY));
   CPPUNIT_ASSERT_EQUAL(std::string("aria2"), mkstr(res, USR_HOST, uri));
   CPPUNIT_ASSERT_EQUAL(std::string("foo"), mkstr(res, USR_QUERY, uri));
 
@@ -196,8 +198,8 @@ void UriSplitTest::testUriSplit()
   uri = "http://aria2#bar";
   memset(&res, 0, sizeof(res));
   CPPUNIT_ASSERT_EQUAL(0, uri_split(&res, uri));
-  CHECK_FIELD_SET(res, (1 << USR_SCHEME) | (1 << USR_HOST) |
-                  (1 << USR_FRAGMENT));
+  CHECK_FIELD_SET(res,
+                  (1 << USR_SCHEME) | (1 << USR_HOST) | (1 << USR_FRAGMENT));
   CPPUNIT_ASSERT_EQUAL(std::string("aria2"), mkstr(res, USR_HOST, uri));
   CPPUNIT_ASSERT_EQUAL(std::string("bar"), mkstr(res, USR_FRAGMENT, uri));
 
@@ -205,8 +207,9 @@ void UriSplitTest::testUriSplit()
   uri = "https://aria2:443?foo";
   memset(&res, 0, sizeof(res));
   CPPUNIT_ASSERT_EQUAL(0, uri_split(&res, uri));
-  CHECK_FIELD_SET(res, (1 << USR_SCHEME) | (1 << USR_HOST) | (1 << USR_PORT) |
-                  (1 << USR_QUERY));
+  CHECK_FIELD_SET(res,
+                  (1 << USR_SCHEME) | (1 << USR_HOST) | (1 << USR_PORT) |
+                      (1 << USR_QUERY));
   CPPUNIT_ASSERT_EQUAL(std::string("aria2"), mkstr(res, USR_HOST, uri));
   CPPUNIT_ASSERT_EQUAL(std::string("foo"), mkstr(res, USR_QUERY, uri));
   CPPUNIT_ASSERT_EQUAL((uint16_t)443, res.port);
@@ -215,8 +218,9 @@ void UriSplitTest::testUriSplit()
   uri = "https://aria2:443#bar";
   memset(&res, 0, sizeof(res));
   CPPUNIT_ASSERT_EQUAL(0, uri_split(&res, uri));
-  CHECK_FIELD_SET(res, (1 << USR_SCHEME) | (1 << USR_HOST) | (1 << USR_PORT) |
-                  (1 << USR_FRAGMENT));
+  CHECK_FIELD_SET(res,
+                  (1 << USR_SCHEME) | (1 << USR_HOST) | (1 << USR_PORT) |
+                      (1 << USR_FRAGMENT));
   CPPUNIT_ASSERT_EQUAL(std::string("aria2"), mkstr(res, USR_HOST, uri));
   CPPUNIT_ASSERT_EQUAL(std::string("bar"), mkstr(res, USR_FRAGMENT, uri));
   CPPUNIT_ASSERT_EQUAL((uint16_t)443, res.port);
@@ -225,9 +229,10 @@ void UriSplitTest::testUriSplit()
   uri = "https://user:pass@aria2:443?foo";
   memset(&res, 0, sizeof(res));
   CPPUNIT_ASSERT_EQUAL(0, uri_split(&res, uri));
-  CHECK_FIELD_SET(res, (1 << USR_SCHEME) | (1 << USR_HOST) | (1 << USR_PORT) |
-                  (1 << USR_QUERY) | (1 << USR_USERINFO) | (1 << USR_USER) |
-                  (1 << USR_PASSWD));
+  CHECK_FIELD_SET(res,
+                  (1 << USR_SCHEME) | (1 << USR_HOST) | (1 << USR_PORT) |
+                      (1 << USR_QUERY) | (1 << USR_USERINFO) | (1 << USR_USER) |
+                      (1 << USR_PASSWD));
   CPPUNIT_ASSERT_EQUAL(std::string("aria2"), mkstr(res, USR_HOST, uri));
   CPPUNIT_ASSERT_EQUAL(std::string("user"), mkstr(res, USR_USER, uri));
   CPPUNIT_ASSERT_EQUAL(std::string("pass"), mkstr(res, USR_PASSWD, uri));
@@ -238,9 +243,10 @@ void UriSplitTest::testUriSplit()
   uri = "https://user:pass@aria2:443#bar";
   memset(&res, 0, sizeof(res));
   CPPUNIT_ASSERT_EQUAL(0, uri_split(&res, uri));
-  CHECK_FIELD_SET(res, (1 << USR_SCHEME) | (1 << USR_HOST) | (1 << USR_PORT) |
-                  (1 << USR_FRAGMENT) | (1 << USR_USERINFO) | (1 << USR_USER) |
-                  (1 << USR_PASSWD));
+  CHECK_FIELD_SET(res,
+                  (1 << USR_SCHEME) | (1 << USR_HOST) | (1 << USR_PORT) |
+                      (1 << USR_FRAGMENT) | (1 << USR_USERINFO) |
+                      (1 << USR_USER) | (1 << USR_PASSWD));
   CPPUNIT_ASSERT_EQUAL(std::string("aria2"), mkstr(res, USR_HOST, uri));
   CPPUNIT_ASSERT_EQUAL(std::string("user"), mkstr(res, USR_USER, uri));
   CPPUNIT_ASSERT_EQUAL(std::string("pass"), mkstr(res, USR_PASSWD, uri));
@@ -251,9 +257,10 @@ void UriSplitTest::testUriSplit()
   uri = "http://user:pass@aria2?foo";
   memset(&res, 0, sizeof(res));
   CPPUNIT_ASSERT_EQUAL(0, uri_split(&res, uri));
-  CHECK_FIELD_SET(res, (1 << USR_SCHEME) | (1 << USR_HOST) |
-                  (1 << USR_QUERY) | (1 << USR_USERINFO) |
-                  (1 << USR_USER) | (1 << USR_PASSWD));
+  CHECK_FIELD_SET(res,
+                  (1 << USR_SCHEME) | (1 << USR_HOST) | (1 << USR_QUERY) |
+                      (1 << USR_USERINFO) | (1 << USR_USER) |
+                      (1 << USR_PASSWD));
   CPPUNIT_ASSERT_EQUAL(std::string("aria2"), mkstr(res, USR_HOST, uri));
   CPPUNIT_ASSERT_EQUAL(std::string("user"), mkstr(res, USR_USER, uri));
   CPPUNIT_ASSERT_EQUAL(std::string("pass"), mkstr(res, USR_PASSWD, uri));
@@ -263,9 +270,10 @@ void UriSplitTest::testUriSplit()
   uri = "http://user:pass@aria2#bar";
   memset(&res, 0, sizeof(res));
   CPPUNIT_ASSERT_EQUAL(0, uri_split(&res, uri));
-  CHECK_FIELD_SET(res, (1 << USR_SCHEME) | (1 << USR_HOST) |
-                  (1 << USR_FRAGMENT) | (1 << USR_USERINFO) |
-                  (1 << USR_USER) | (1 << USR_PASSWD));
+  CHECK_FIELD_SET(res,
+                  (1 << USR_SCHEME) | (1 << USR_HOST) | (1 << USR_FRAGMENT) |
+                      (1 << USR_USERINFO) | (1 << USR_USER) |
+                      (1 << USR_PASSWD));
   CPPUNIT_ASSERT_EQUAL(std::string("aria2"), mkstr(res, USR_HOST, uri));
   CPPUNIT_ASSERT_EQUAL(std::string("user"), mkstr(res, USR_USER, uri));
   CPPUNIT_ASSERT_EQUAL(std::string("pass"), mkstr(res, USR_PASSWD, uri));
@@ -275,8 +283,9 @@ void UriSplitTest::testUriSplit()
   uri = "http://aria2/?";
   memset(&res, 0, sizeof(res));
   CPPUNIT_ASSERT_EQUAL(0, uri_split(&res, uri));
-  CHECK_FIELD_SET(res, (1 << USR_SCHEME) | (1 << USR_HOST) | (1 << USR_PATH) |
-                  (1 << USR_QUERY));
+  CHECK_FIELD_SET(res,
+                  (1 << USR_SCHEME) | (1 << USR_HOST) | (1 << USR_PATH) |
+                      (1 << USR_QUERY));
   CPPUNIT_ASSERT_EQUAL(std::string("aria2"), mkstr(res, USR_HOST, uri));
   CPPUNIT_ASSERT_EQUAL(std::string("/"), mkstr(res, USR_PATH, uri));
   CPPUNIT_ASSERT_EQUAL(std::string(""), mkstr(res, USR_QUERY, uri));
@@ -285,8 +294,9 @@ void UriSplitTest::testUriSplit()
   uri = "http://aria2/#";
   memset(&res, 0, sizeof(res));
   CPPUNIT_ASSERT_EQUAL(0, uri_split(&res, uri));
-  CHECK_FIELD_SET(res, (1 << USR_SCHEME) | (1 << USR_HOST) | (1 << USR_PATH) |
-                  (1 << USR_FRAGMENT));
+  CHECK_FIELD_SET(res,
+                  (1 << USR_SCHEME) | (1 << USR_HOST) | (1 << USR_PATH) |
+                      (1 << USR_FRAGMENT));
   CPPUNIT_ASSERT_EQUAL(std::string("aria2"), mkstr(res, USR_HOST, uri));
   CPPUNIT_ASSERT_EQUAL(std::string("/"), mkstr(res, USR_PATH, uri));
   CPPUNIT_ASSERT_EQUAL(std::string(""), mkstr(res, USR_FRAGMENT, uri));
@@ -295,8 +305,9 @@ void UriSplitTest::testUriSplit()
   uri = "http://aria2/?#";
   memset(&res, 0, sizeof(res));
   CPPUNIT_ASSERT_EQUAL(0, uri_split(&res, uri));
-  CHECK_FIELD_SET(res, (1 << USR_SCHEME) | (1 << USR_HOST) | (1 << USR_PATH) |
-                  (1 << USR_QUERY) | (1 << USR_FRAGMENT));
+  CHECK_FIELD_SET(res,
+                  (1 << USR_SCHEME) | (1 << USR_HOST) | (1 << USR_PATH) |
+                      (1 << USR_QUERY) | (1 << USR_FRAGMENT));
   CPPUNIT_ASSERT_EQUAL(std::string("aria2"), mkstr(res, USR_HOST, uri));
   CPPUNIT_ASSERT_EQUAL(std::string("/"), mkstr(res, USR_PATH, uri));
   CPPUNIT_ASSERT_EQUAL(std::string(""), mkstr(res, USR_QUERY, uri));
@@ -322,8 +333,9 @@ void UriSplitTest::testUriSplit()
   uri = "https://user@[::1]";
   memset(&res, 0, sizeof(res));
   CPPUNIT_ASSERT_EQUAL(0, uri_split(&res, uri));
-  CHECK_FIELD_SET(res, (1 << USR_SCHEME) | (1 << USR_HOST) |
-                  (1 << USR_USERINFO) | (1 << USR_USER));
+  CHECK_FIELD_SET(res,
+                  (1 << USR_SCHEME) | (1 << USR_HOST) | (1 << USR_USERINFO) |
+                      (1 << USR_USER));
   CPPUNIT_ASSERT_EQUAL(std::string("::1"), mkstr(res, USR_HOST, uri));
   CPPUNIT_ASSERT_EQUAL(std::string("user"), mkstr(res, USR_USERINFO, uri));
   CPPUNIT_ASSERT_EQUAL(std::string("user"), mkstr(res, USR_USER, uri));
@@ -333,8 +345,9 @@ void UriSplitTest::testUriSplit()
   uri = "https://user:pass@[::1]";
   memset(&res, 0, sizeof(res));
   CPPUNIT_ASSERT_EQUAL(0, uri_split(&res, uri));
-  CHECK_FIELD_SET(res, (1 << USR_SCHEME) | (1 << USR_HOST) |
-                  (1 << USR_USERINFO) | (1 << USR_USER) | (1 << USR_PASSWD));
+  CHECK_FIELD_SET(res,
+                  (1 << USR_SCHEME) | (1 << USR_HOST) | (1 << USR_USERINFO) |
+                      (1 << USR_USER) | (1 << USR_PASSWD));
   CPPUNIT_ASSERT_EQUAL(std::string("::1"), mkstr(res, USR_HOST, uri));
   CPPUNIT_ASSERT_EQUAL(std::string("user:pass"), mkstr(res, USR_USERINFO, uri));
   CPPUNIT_ASSERT_EQUAL(std::string("user"), mkstr(res, USR_USER, uri));
@@ -344,16 +357,18 @@ void UriSplitTest::testUriSplit()
   uri = "http://aria2/f";
   memset(&res, 0, sizeof(res));
   CPPUNIT_ASSERT_EQUAL(0, uri_split(&res, uri));
-  CHECK_FIELD_SET(res, (1 << USR_SCHEME) | (1 << USR_HOST) | (1 << USR_PATH) |
-                  (1 << USR_BASENAME));
+  CHECK_FIELD_SET(res,
+                  (1 << USR_SCHEME) | (1 << USR_HOST) | (1 << USR_PATH) |
+                      (1 << USR_BASENAME));
   CPPUNIT_ASSERT_EQUAL(std::string("/f"), mkstr(res, USR_PATH, uri));
   CPPUNIT_ASSERT_EQUAL(std::string("f"), mkstr(res, USR_BASENAME, uri));
 
   uri = "http://[::1]/f";
   memset(&res, 0, sizeof(res));
   CPPUNIT_ASSERT_EQUAL(0, uri_split(&res, uri));
-  CHECK_FIELD_SET(res, (1 << USR_SCHEME) | (1 << USR_HOST) | (1 << USR_PATH) |
-                  (1 << USR_BASENAME));
+  CHECK_FIELD_SET(res,
+                  (1 << USR_SCHEME) | (1 << USR_HOST) | (1 << USR_PATH) |
+                      (1 << USR_BASENAME));
   CPPUNIT_ASSERT_EQUAL(std::string("::1"), mkstr(res, USR_HOST, uri));
   CPPUNIT_ASSERT_EQUAL(std::string("/f"), mkstr(res, USR_PATH, uri));
   CPPUNIT_ASSERT_EQUAL(std::string("f"), mkstr(res, USR_BASENAME, uri));
@@ -361,8 +376,9 @@ void UriSplitTest::testUriSplit()
   uri = "http://[::1]:8080/f";
   memset(&res, 0, sizeof(res));
   CPPUNIT_ASSERT_EQUAL(0, uri_split(&res, uri));
-  CHECK_FIELD_SET(res, (1 << USR_SCHEME) | (1 << USR_HOST) | (1 << USR_PORT) |
-                  (1 << USR_PATH) | (1 << USR_BASENAME));
+  CHECK_FIELD_SET(res,
+                  (1 << USR_SCHEME) | (1 << USR_HOST) | (1 << USR_PORT) |
+                      (1 << USR_PATH) | (1 << USR_BASENAME));
   CPPUNIT_ASSERT_EQUAL((uint16_t)8080, res.port);
   CPPUNIT_ASSERT_EQUAL(std::string("/f"), mkstr(res, USR_PATH, uri));
   CPPUNIT_ASSERT_EQUAL(std::string("f"), mkstr(res, USR_BASENAME, uri));
@@ -370,9 +386,10 @@ void UriSplitTest::testUriSplit()
   uri = "https://user:pass@host/f";
   memset(&res, 0, sizeof(res));
   CPPUNIT_ASSERT_EQUAL(0, uri_split(&res, uri));
-  CHECK_FIELD_SET(res, (1 << USR_SCHEME) | (1 << USR_HOST) |
-                  (1 << USR_USERINFO) | (1 << USR_USER) | (1 << USR_PASSWD) |
-                  (1 << USR_PATH) | (1 << USR_BASENAME));
+  CHECK_FIELD_SET(res,
+                  (1 << USR_SCHEME) | (1 << USR_HOST) | (1 << USR_USERINFO) |
+                      (1 << USR_USER) | (1 << USR_PASSWD) | (1 << USR_PATH) |
+                      (1 << USR_BASENAME));
   CPPUNIT_ASSERT_EQUAL(std::string("host"), mkstr(res, USR_HOST, uri));
   CPPUNIT_ASSERT_EQUAL(std::string("user:pass"), mkstr(res, USR_USERINFO, uri));
   CPPUNIT_ASSERT_EQUAL(std::string("/f"), mkstr(res, USR_PATH, uri));
@@ -381,8 +398,9 @@ void UriSplitTest::testUriSplit()
   uri = "http://aria2/index.html?foo";
   memset(&res, 0, sizeof(res));
   CPPUNIT_ASSERT_EQUAL(0, uri_split(&res, uri));
-  CHECK_FIELD_SET(res, (1 << USR_SCHEME) | (1 << USR_HOST) | (1 << USR_PATH) |
-                  (1 << USR_QUERY) | (1 << USR_BASENAME));
+  CHECK_FIELD_SET(res,
+                  (1 << USR_SCHEME) | (1 << USR_HOST) | (1 << USR_PATH) |
+                      (1 << USR_QUERY) | (1 << USR_BASENAME));
   CPPUNIT_ASSERT_EQUAL(std::string("/index.html"), mkstr(res, USR_PATH, uri));
   CPPUNIT_ASSERT_EQUAL(std::string("index.html"),
                        mkstr(res, USR_BASENAME, uri));
